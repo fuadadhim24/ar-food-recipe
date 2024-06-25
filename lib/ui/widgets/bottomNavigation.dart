@@ -1,6 +1,6 @@
 import 'package:ar_food_recipe/ui/pages/home_page.dart';
 import 'package:ar_food_recipe/ui/pages/kelas_page.dart';
-import 'package:ar_food_recipe/ui/pages/profil_page.dart';
+import 'package:ar_food_recipe/ui/pages/bantuan_page.dart';
 import 'package:ar_food_recipe/ui/pages/scan_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -20,7 +20,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
     HomePage(),
     ScanPage(),
     KelasPage(),
-    ProfilPage(),
+    BantuanPage(),
   ];
 
   @override
@@ -58,8 +58,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
 
           /// Profile
           SalomonBottomBarItem(
-            icon: Icon(Icons.person),
-            title: Text("Profil"),
+            icon: Icon(Icons.supervisor_account),
+            title: Text("Bantuan"),
             selectedColor: Colors.teal,
           ),
         ],

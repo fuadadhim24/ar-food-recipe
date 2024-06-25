@@ -91,9 +91,16 @@ class _HomePageState extends State<HomePage> {
                   onTap: () {
                     Get.toNamed('/all-menu');
                   },
-                  child: Text(
-                    'Semua →',
-                    style: blackTextStyle.copyWith(fontSize: 13),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: greenColor,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      'Semua →',
+                      style: whiteTextStyle.copyWith(fontSize: 13, fontWeight: bold),
+                    ),
                   ),
                 ),
               ],
