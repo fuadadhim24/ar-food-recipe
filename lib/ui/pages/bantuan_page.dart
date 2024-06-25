@@ -1,5 +1,7 @@
 import 'package:ar_food_recipe/shared/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class BantuanPage extends StatelessWidget {
   @override
@@ -26,7 +28,10 @@ class BantuanPage extends StatelessWidget {
           ),
           SizedBox(height: 8),
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              launchUrlString(
+                  'https://api.whatsapp.com/send?phone=6287840199095');
+            },
             child: Container(
               width: 200,
               height: 60,

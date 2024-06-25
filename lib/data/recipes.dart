@@ -15,7 +15,7 @@ class Recipes {
         'Tambahkan nasi dan kecap, aduk rata.',
         'Masak hingga nasi terasa kering dan harum.',
       ],
-      'namaFoto': 'bubur-sup-daging-kacang-merah.jpg',
+      'namaFoto': 'nasi-goreng.jpg',
     },
     {
       'id': '2',
@@ -38,7 +38,7 @@ class Recipes {
         'Tusukkan ayam ke tusuk sate.',
         'Bakar sate hingga matang sambil diolesi dengan kecap manis.',
       ],
-      'namaFoto': 'nasi-ikan-bumbu-kuning.jpg',
+      'namaFoto': 'pisang-goreng.jpg',
     },
     {
       'id': '3',
