@@ -87,9 +87,14 @@ class _HomePageState extends State<HomePage> {
                   style:
                       blackTextStyle.copyWith(fontSize: 20, fontWeight: bold),
                 ),
-                Text(
-                  'Semua',
-                  style: blackTextStyle.copyWith(fontSize: 13),
+                InkWell(
+                  onTap: () {
+                    Get.toNamed('/all-menu');
+                  },
+                  child: Text(
+                    'Semua →',
+                    style: blackTextStyle.copyWith(fontSize: 13),
+                  ),
                 ),
               ],
             ),
@@ -168,7 +173,7 @@ class _HomePageState extends State<HomePage> {
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
-          // crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               nama,

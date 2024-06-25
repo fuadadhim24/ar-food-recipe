@@ -40,6 +40,23 @@ class Recipes {
       ],
       'namaFoto': 'nasi-ikan-bumbu-kuning.jpg',
     },
+    {
+      'id': '3',
+      'nama': 'Salad Buah Segar',
+      'deskripsi':
+          'Salad buah segar adalah campuran berbagai buah-buahan yang segar dan kaya akan vitamin, cocok untuk dinikmati sebagai hidangan penutup sehat.',
+      'levelKesulitan': 'Mudah',
+      'durasiMasak': '15',
+      'bahan': ['apel', 'pir', 'melon', 'anggur', 'stroberi'],
+      'alat': ['pisau', 'mangkuk besar', 'sendok'],
+      'stepMasak': [
+        'Cuci bersih semua buah-buahan.',
+        'Potong-potong buah-buahan sesuai selera.',
+        'Campurkan semua buah dalam mangkuk besar.',
+        'Sajikan salad buah segar dalam mangkuk atau piring saji.',
+      ],
+      'namaFoto': 'salad-buah.jpg',
+    },
   ];
   static final Map<String, dynamic> listRecipeChoosed = {};
 }
