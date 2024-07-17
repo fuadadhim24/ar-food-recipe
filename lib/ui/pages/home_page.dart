@@ -119,6 +119,37 @@ class _HomePageState extends State<HomePage> {
             margin: EdgeInsets.symmetric(horizontal: 25),
             child: Column(
               children: [
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Resep Andalan',
+                        style: blackTextStyle.copyWith(
+                            fontSize: 20, fontWeight: bold),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Get.toNamed('/all-menu');
+                        },
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: greenColor,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            'Semua →',
+                            style: whiteTextStyle.copyWith(
+                                fontSize: 13, fontWeight: bold),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 SizedBox(height: 24),
                 Container(
                   width: double.infinity,

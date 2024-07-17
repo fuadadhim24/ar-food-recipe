@@ -12,6 +12,35 @@ class AllMenuPage extends StatefulWidget {
 
 class _AllMenuPageState extends State<AllMenuPage> {
   List<Map<String, dynamic>> items = Recipes.listRecipes;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDataIfNeeded();
+  }
+
+  Future<void> _loadDataIfNeeded() async {
+    if (Recipes.listRecipes.isEmpty) {
+      try {
+        await Recipes.initializeRecipes();
+        setState(() {
+          _isLoading = false;
+          items = Recipes.listRecipes;
+        });
+      } catch (e) {
+        print('Error loading recipes: $e');
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } else {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,90 +52,96 @@ class _AllMenuPageState extends State<AllMenuPage> {
         centerTitle: true,
         elevation: 0,
       ),
-      body: ListView.builder(
-        itemCount: (items.length / 2).ceil(),
-        itemBuilder: (context, rowIndex) {
-          int startIndex = rowIndex * 2;
-          int count =
-              startIndex + 2 <= items.length ? 2 : items.length - startIndex;
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: (items.length / 2).ceil(),
+              itemBuilder: (context, rowIndex) {
+                int startIndex = rowIndex * 2;
+                int count = startIndex + 2 <= items.length
+                    ? 2
+                    : items.length - startIndex;
 
-          return Padding(
-            padding: const EdgeInsets.all(8),
-            child: GridView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10.0,
-                mainAxisSpacing: 10.0,
-              ),
-              itemCount: count,
-              itemBuilder: (context, index) {
-                final recipe = items[startIndex + index];
-                final id = recipe['id'];
-                final nama = recipe['nama'];
-                final namaFoto = recipe['namaFoto'];
-                final durasiMasak = recipe['durasiMasak'];
-
-                return GestureDetector(
-                  onTap: () {
-                    Map<String, dynamic> getRecipe = getRecipeById(id);
-                    setListRecipeChoosed(getRecipe);
-                    Get.toNamed('/detail-menu');
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      color: blackColor,
-                      image: DecorationImage(
-                        image: AssetImage('assets/img/$namaFoto'),
-                        fit: BoxFit.cover,
-                      ),
+                return Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: GridView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 10.0,
+                      mainAxisSpacing: 10.0,
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          nama,
-                          style: whiteTextStyle.copyWith(
-                            fontSize: 18,
-                            fontWeight: bold,
+                    itemCount: count,
+                    itemBuilder: (context, index) {
+                      final recipe = items[startIndex + index];
+                      final id = recipe['id'];
+                      final nama = recipe['nama'];
+                      final namaFoto = recipe['namaFoto'];
+                      final durasiMasak = recipe['durasiMasak'];
+
+                      return GestureDetector(
+                        onTap: () async {
+                          Map<String, dynamic> getRecipe = getRecipeById(id);
+                          setListRecipeChoosed(getRecipe);
+                          Get.toNamed('/detail-menu');
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            color: blackColor,
+                            image: DecorationImage(
+                              image: NetworkImage(
+                                'https://pkm-foodrecipes.com/recipes/private/$namaFoto',
+                              ),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                nama,
+                                style: whiteTextStyle.copyWith(
+                                  fontSize: 18,
+                                  fontWeight: bold,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Row(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.timelapse,
+                                        color: whiteColor,
+                                        size: 12,
+                                      ),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      Text(
+                                        durasiMasak + ' menit',
+                                        style: whiteTextStyle.copyWith(
+                                            fontSize: 12),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              )
+                            ],
                           ),
                         ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Row(
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.timelapse,
-                                  color: whiteColor,
-                                  size: 12,
-                                ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                Text(
-                                  durasiMasak + ' menit',
-                                  style: whiteTextStyle.copyWith(fontSize: 12),
-                                ),
-                              ],
-                            )
-                          ],
-                        )
-                      ],
-                    ),
+                      );
+                    },
                   ),
                 );
               },
             ),
-          );
-        },
-      ),
     );
   }
 
