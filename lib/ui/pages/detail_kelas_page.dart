@@ -34,7 +34,9 @@ class _DetailKelasPageState extends State<DetailKelasPage> {
                     height: 240,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage('assets/img/$namaFoto'),
+                        image: NetworkImage(
+                          'https://pkm-foodrecipes.com/kelas/private/$namaFoto',
+                        ),
                         fit: BoxFit.cover,
                       ),
                     ),

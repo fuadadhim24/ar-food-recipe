@@ -20,7 +20,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
     HomePage(),
     ScanPage(),
     KelasPage(),
-    BantuanPage(),
+    // BantuanPage(),
   ];
 
   @override
@@ -57,11 +57,11 @@ class _BottomNavigationState extends State<BottomNavigation> {
           ),
 
           /// Profile
-          SalomonBottomBarItem(
-            icon: Icon(Icons.supervisor_account),
-            title: Text("Bantuan"),
-            selectedColor: Colors.teal,
-          ),
+          // SalomonBottomBarItem(
+          //   icon: Icon(Icons.supervisor_account),
+          //   title: Text("Bantuan"),
+          //   selectedColor: Colors.teal,
+          // ),
         ],
       ),
     );

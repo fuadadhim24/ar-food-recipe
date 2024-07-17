@@ -1,8 +1,8 @@
-import 'package:ar_food_recipe/data/recipes.dart';
-import 'package:ar_food_recipe/ui/widgets/bottomNavigation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ar_food_recipe/data/recipes.dart';
 import 'package:ar_food_recipe/shared/theme.dart';
+import 'package:ar_food_recipe/ui/widgets/bottomNavigation.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,8 +13,34 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int selectedIndex = 0;
+  bool _isLoading = true; // Track loading state
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRecipes(); // Load recipes when widget initializes
+  }
+
+  Future<void> _loadRecipes() async {
+    await Recipes.initializeRecipes();
+    debugPrint(Recipes.listRecipes.toString());
+    setState(() {
+      _isLoading = false; // Recipes loaded, set loading to false
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    return _isLoading ? _buildLoading() : _buildContent();
+  }
+
+  Widget _buildLoading() {
+    return Center(
+      child: CircularProgressIndicator(), // Circular progress indicator
+    );
+  }
+
+  Widget _buildContent() {
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -77,57 +103,12 @@ class _HomePageState extends State<HomePage> {
           SizedBox(
             height: 20,
           ),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Kategori',
-                  style:
-                      blackTextStyle.copyWith(fontSize: 20, fontWeight: bold),
-                ),
-                InkWell(
-                  onTap: () {
-                    Get.toNamed('/all-menu');
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: greenColor,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      'Semua →',
-                      style: whiteTextStyle.copyWith(fontSize: 13, fontWeight: bold),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 35),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                buildNavigationToggle(0, 'Sarapan'),
-                buildNavigationToggle(1, 'Makan Siang'),
-                buildNavigationToggle(2, 'Makan Malam'),
-              ],
-            ),
-          ),
+          SizedBox(height: 20),
           Container(
             margin: EdgeInsets.symmetric(horizontal: 25),
             child: Column(
               children: [
-                SizedBox(
-                  height: 24,
-                ),
+                SizedBox(height: 24),
                 Container(
                   width: double.infinity,
                   height: 320,
@@ -160,8 +141,8 @@ class _HomePageState extends State<HomePage> {
     String namaFoto = recipe['namaFoto'].toString();
     String durasiMasak = recipe['durasiMasak'].toString();
     return GestureDetector(
-      onTap: () {
-        Map<String, dynamic> getRecipe = getRecipeById(id);
+      onTap: () async {
+        Map<String, dynamic> getRecipe = await getRecipeById(id);
         setListRecipeChoosed(getRecipe);
         Get.toNamed('/detail-menu');
       },
@@ -174,7 +155,9 @@ class _HomePageState extends State<HomePage> {
           borderRadius: BorderRadius.circular(50),
           color: blackColor,
           image: DecorationImage(
-            image: AssetImage('assets/img/$namaFoto'),
+            image: NetworkImage(
+              'https://pkm-foodrecipes.com/recipes/private/$namaFoto',
+            ),
             fit: BoxFit.cover,
           ),
         ),
@@ -189,9 +172,7 @@ class _HomePageState extends State<HomePage> {
                 fontWeight: bold,
               ),
             ),
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
             Row(
               children: [
                 Row(
@@ -201,9 +182,7 @@ class _HomePageState extends State<HomePage> {
                       color: whiteColor,
                       size: 12,
                     ),
-                    SizedBox(
-                      width: 5,
-                    ),
+                    SizedBox(width: 5),
                     Text(
                       durasiMasak + ' menit',
                       style: whiteTextStyle.copyWith(fontSize: 12),
@@ -237,7 +216,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Map<String, dynamic> getRecipeById(String id) {
+  Future<Map<String, dynamic>> getRecipeById(String id) async {
+    if (Recipes.listRecipes.isEmpty) {
+      await Recipes.initializeRecipes();
+    }
     var recipe = Recipes.listRecipes
         .firstWhere((res) => res['id'] == id, orElse: () => {});
     return recipe;

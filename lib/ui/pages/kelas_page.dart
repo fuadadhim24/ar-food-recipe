@@ -1,5 +1,4 @@
 import 'package:ar_food_recipe/shared/theme.dart';
-import 'package:ar_food_recipe/ui/widgets/searchContainerWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ar_food_recipe/data/kelas.dart';
@@ -11,110 +10,62 @@ class KelasPage extends StatefulWidget {
 
 class _KelasPageState extends State<KelasPage> {
   int selectedIndex = 0;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRecipes();
+  }
+
+  Future<void> _loadRecipes() async {
+    try {
+      await Kelas.initializeRecipes();
+      debugPrint(Kelas.listRecipes.toString());
+    } catch (e) {
+      print('Error initializing recipes: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(left: 13, right: 13, top: 36),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Kelas',
-                style: blackTextStyle.copyWith(fontSize: 20, fontWeight: bold),
-              ),
-            ],
-          ),
-          const SizedBox(height: 30),
-          const SearchContainer(hintText: 'cth: bahaya gizi buruk'),
-          const SizedBox(height: 20),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 35),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.center,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Kelas'),
+        centerTitle: true,
+      ),
+      body: _isLoading
+          ? _buildLoading()
+          : Column(
               children: [
-                buildNavigationToggle(0, 'Tangani'),
-                buildNavigationToggle(1, 'Antisipasi'),
+                buildNavigationRow(),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: Kelas.listRecipes.length,
+                    itemBuilder: (context, index) {
+                      return buildCard(Kelas.listRecipes[index]);
+                    },
+                  ),
+                ),
               ],
             ),
-          ),
-          const SizedBox(height: 10),
-          buildListCard(),
+    );
+  }
+
+  Widget buildNavigationRow() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 35, vertical: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          buildNavigationToggle(0, 'Tangani'),
+          buildNavigationToggle(1, 'Antisipasi'),
         ],
-      ),
-    );
-  }
-
-  Widget buildListCard() {
-    return Expanded(
-      child: ListView.builder(
-        itemCount: Kelas.kelasList.length,
-        itemBuilder: (context, index) {
-          return buildCard(Kelas.kelasList[index]);
-        },
-      ),
-    );
-  }
-
-  Widget buildCard(Map<String, dynamic> kelas) {
-    String id = kelas['id'].toString();
-    String title = kelas['title'].toString();
-    String namaFoto = kelas['namaFoto'].toString();
-    return GestureDetector(
-      onTap: () {
-        var listKelasChoosed = getKelasById(id);
-        setListKelasChoosed(listKelasChoosed);
-        debugPrint(Kelas.listKelasChoosed.toString());
-        Get.toNamed('/detail-kelas');
-      },
-      child: Container(
-        height: 150,
-        margin: const EdgeInsets.only(bottom: 20),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          border: Border.all(
-            color: orangeColor,
-            width: 2,
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              constraints: const BoxConstraints(maxWidth: 130),
-              margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: blackTextStyle.copyWith(fontSize: 16),
-                  ),
-                  Text(
-                    'baca selengkapnya →',
-                    style: greyTextStyle.copyWith(fontSize: 11),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              width: 160,
-              height: double.infinity,
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage('assets/img/$namaFoto'),
-                      fit: BoxFit.cover),
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(30),
-                    bottomRight: Radius.circular(30),
-                  )),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -138,14 +89,87 @@ class _KelasPageState extends State<KelasPage> {
     );
   }
 
-  Map<String, dynamic> getKelasById(String id) {
-    var kelas = Kelas.kelasList
-        .firstWhere((kelas) => kelas['id'] == id, orElse: () => {});
-    return kelas;
+  Widget buildCard(Map<String, dynamic> kelas) {
+    String id = kelas['id'].toString();
+    String title = kelas['title'].toString();
+    String namaFoto = kelas['namaFoto'].toString();
+    return GestureDetector(
+      onTap: () async {
+        var kelasChoosed = await getRecipeById(id);
+        setListKelasChoosed(kelasChoosed);
+        Get.toNamed('/detail-kelas');
+      },
+      child: Container(
+        height: 150,
+        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30),
+          border: Border.all(color: orangeColor, width: 2),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              flex: 3,
+              child: Container(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text(
+                      title,
+                      style: blackTextStyle.copyWith(fontSize: 16),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      'baca selengkapnya →',
+                      style: greyTextStyle.copyWith(fontSize: 11),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(30),
+                    bottomRight: Radius.circular(30),
+                  ),
+                  image: DecorationImage(
+                    image: NetworkImage(
+                      'https://pkm-foodrecipes.com/kelas/private/$namaFoto',
+                    ),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
-  void setListKelasChoosed(listKelasChoosed) {
+  Widget _buildLoading() {
+    return Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+
+  Future<Map<String, dynamic>> getRecipeById(String id) async {
+    if (Kelas.listRecipes.isEmpty) {
+      await Kelas.initializeRecipes();
+    }
+    var recipe = Kelas.listRecipes.firstWhere((res) => res['id'] == id, orElse: () => {});
+    return recipe;
+  }
+
+  void setListKelasChoosed(Map<String, dynamic> kelasChoosed) {
     Kelas.listKelasChoosed.clear();
-    Kelas.listKelasChoosed.addAll(listKelasChoosed);
+    Kelas.listKelasChoosed.addAll(kelasChoosed);
   }
 }

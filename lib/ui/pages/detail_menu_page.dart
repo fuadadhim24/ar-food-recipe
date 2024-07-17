@@ -37,7 +37,9 @@ class _DetailMenuPageState extends State<DetailMenuPage> {
                     height: 240,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage('assets/img/$namaFoto'),
+                        image: NetworkImage(
+                          'https://pkm-foodrecipes.com/recipes/private/$namaFoto',
+                        ),
                         fit: BoxFit.cover,
                       ),
                     ),
