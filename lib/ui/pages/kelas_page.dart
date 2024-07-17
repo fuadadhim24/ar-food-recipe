@@ -99,7 +99,7 @@ class _KelasPageState extends State<KelasPage> {
     String id = kelas['id'].toString();
     String title = kelas['title'].toString();
     String namaFoto = kelas['namaFoto'].toString();
-    String description = kelas['description'].toString();
+    String description = kelas['deskripsi'].toString();
     String kategori = kelas['kategori'].toString();
 
     bool isCategoryMatched = (_selectedCategory == 0 && kategori.contains('tangani')) ||
