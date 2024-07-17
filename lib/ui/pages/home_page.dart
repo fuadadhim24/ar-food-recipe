@@ -5,7 +5,7 @@ import 'package:ar_food_recipe/shared/theme.dart';
 import 'package:ar_food_recipe/ui/widgets/bottomNavigation.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -18,15 +18,26 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _loadRecipes(); // Load recipes when widget initializes
+    if (Recipes.listRecipes.isEmpty) {
+      _loadRecipes(); // Load recipes only if list is empty
+    } else {
+      setState(() {
+        _isLoading = false; // Set loading to false if recipes already loaded
+      });
+    }
   }
 
   Future<void> _loadRecipes() async {
-    await Recipes.initializeRecipes();
-    debugPrint(Recipes.listRecipes.toString());
-    setState(() {
-      _isLoading = false; // Recipes loaded, set loading to false
-    });
+    try {
+      await Recipes.initializeRecipes();
+      debugPrint(Recipes.listRecipes.toString());
+    } catch (e) {
+      print('Error initializing recipes: $e');
+    } finally {
+      setState(() {
+        _isLoading = false; // Recipes loaded, set loading to false
+      });
+    }
   }
 
   @override
@@ -115,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(50),
                   ),
-                  child: buiildListResepContent(),
+                  child: buildListResepContent(),
                 ),
               ],
             ),
@@ -125,7 +136,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget buiildListResepContent() {
+  Widget buildListResepContent() {
     return ListView.builder(
       scrollDirection: Axis.horizontal,
       itemCount: Recipes.listRecipes.length,
@@ -225,8 +236,8 @@ class _HomePageState extends State<HomePage> {
     return recipe;
   }
 
-  void setListRecipeChoosed(listRecipeChoosed) {
+  void setListRecipeChoosed(Map<String, dynamic> recipeChoosed) {
     Recipes.listRecipeChoosed.clear();
-    Recipes.listRecipeChoosed.addAll(listRecipeChoosed);
+    Recipes.listRecipeChoosed.addAll(recipeChoosed);
   }
 }

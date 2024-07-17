@@ -1,7 +1,7 @@
-import 'package:ar_food_recipe/shared/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ar_food_recipe/data/kelas.dart';
+import 'package:ar_food_recipe/shared/theme.dart';
 
 class KelasPage extends StatefulWidget {
   @override
@@ -19,12 +19,19 @@ class _KelasPageState extends State<KelasPage> {
   }
 
   Future<void> _loadRecipes() async {
-    try {
-      await Kelas.initializeRecipes();
-      debugPrint(Kelas.listRecipes.toString());
-    } catch (e) {
-      print('Error initializing recipes: $e');
-    } finally {
+    if (Kelas.listRecipes.isEmpty) {
+      try {
+        await Kelas.initializeRecipes();
+        debugPrint(Kelas.listRecipes.toString());
+      } catch (e) {
+        print('Error initializing recipes: $e');
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } else {
+      // If recipes are already loaded, set isLoading to false
       setState(() {
         _isLoading = false;
       });
@@ -95,8 +102,8 @@ class _KelasPageState extends State<KelasPage> {
     String namaFoto = kelas['namaFoto'].toString();
     return GestureDetector(
       onTap: () async {
-        var kelasChoosed = await getRecipeById(id);
-        setListKelasChoosed(kelasChoosed);
+        var kelasChoosed = await getKelasById(id);
+        setKelasChoosed(kelasChoosed);
         Get.toNamed('/detail-kelas');
       },
       child: Container(
@@ -160,15 +167,15 @@ class _KelasPageState extends State<KelasPage> {
     );
   }
 
-  Future<Map<String, dynamic>> getRecipeById(String id) async {
+  Future<Map<String, dynamic>> getKelasById(String id) async {
     if (Kelas.listRecipes.isEmpty) {
       await Kelas.initializeRecipes();
     }
-    var recipe = Kelas.listRecipes.firstWhere((res) => res['id'] == id, orElse: () => {});
-    return recipe;
+    var kelas = Kelas.listRecipes.firstWhere((kelas) => kelas['id'] == id, orElse: () => {});
+    return kelas;
   }
 
-  void setListKelasChoosed(Map<String, dynamic> kelasChoosed) {
+  void setKelasChoosed(Map<String, dynamic> kelasChoosed) {
     Kelas.listKelasChoosed.clear();
     Kelas.listKelasChoosed.addAll(kelasChoosed);
   }
