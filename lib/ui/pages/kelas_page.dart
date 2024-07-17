@@ -9,7 +9,7 @@ class KelasPage extends StatefulWidget {
 }
 
 class _KelasPageState extends State<KelasPage> {
-  int selectedIndex = 0;
+  int _selectedCategory = 0; // Menyimpan kategori yang dipilih
   bool _isLoading = true;
 
   @override
@@ -31,7 +31,6 @@ class _KelasPageState extends State<KelasPage> {
         });
       }
     } else {
-      // If recipes are already loaded, set isLoading to false
       setState(() {
         _isLoading = false;
       });
@@ -78,12 +77,12 @@ class _KelasPageState extends State<KelasPage> {
   }
 
   Widget buildNavigationToggle(int index, String text) {
-    bool isSelected = selectedIndex == index;
+    bool isSelected = _selectedCategory == index;
 
     return InkWell(
       onTap: () {
         setState(() {
-          selectedIndex = index;
+          _selectedCategory = index;
         });
       },
       child: Text(
@@ -100,6 +99,16 @@ class _KelasPageState extends State<KelasPage> {
     String id = kelas['id'].toString();
     String title = kelas['title'].toString();
     String namaFoto = kelas['namaFoto'].toString();
+    String description = kelas['description'].toString();
+    String kategori = kelas['kategori'].toString();
+
+    bool isCategoryMatched = (_selectedCategory == 0 && kategori.contains('tangani')) ||
+        (_selectedCategory == 1 && kategori.contains('antisipasi'));
+
+    if (!isCategoryMatched) {
+      return SizedBox.shrink();
+    }
+
     return GestureDetector(
       onTap: () async {
         var kelasChoosed = await getKelasById(id);
@@ -131,8 +140,10 @@ class _KelasPageState extends State<KelasPage> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      'baca selengkapnya →',
+                      description,
                       style: greyTextStyle.copyWith(fontSize: 11),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
