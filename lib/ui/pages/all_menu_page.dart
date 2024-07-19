@@ -2,6 +2,7 @@ import 'package:ar_food_recipe/data/recipes.dart';
 import 'package:ar_food_recipe/shared/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'dart:ui';
 
 class AllMenuPage extends StatefulWidget {
   const AllMenuPage({super.key});
@@ -87,7 +88,7 @@ class _AllMenuPageState extends State<AllMenuPage> {
                           Get.toNamed('/detail-menu');
                         },
                         child: Container(
-                          padding: EdgeInsets.all(20),
+                          padding: EdgeInsets.only(top: 60),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(30),
                             color: blackColor,
@@ -98,42 +99,65 @@ class _AllMenuPageState extends State<AllMenuPage> {
                               fit: BoxFit.cover,
                             ),
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Text(
-                                nama,
-                                style: whiteTextStyle.copyWith(
-                                  fontSize: 18,
-                                  fontWeight: bold,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.only(bottomRight: Radius.circular(30), bottomLeft: Radius.circular(30)),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(
+                                sigmaX: 2,
+                                sigmaY: 2,
+                              ),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.bottomCenter,
+                                    end: Alignment.topCenter,
+                                    colors: [
+                                      blackColor.withOpacity(
+                                          0.01),
+                                      blackColor.withOpacity(
+                                          0),
+                                    ],
+                                  ),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10),
+                                      child: Text(
+                                        nama,
+                                        style: whiteTextStyle.copyWith(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    // SizedBox(height: 10),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 10, bottom: 12, left: 10, right: 10),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.timelapse,
+                                            color: Colors.white,
+                                            size: 12,
+                                          ),
+                                          SizedBox(width: 5),
+                                          Text(
+                                            durasiMasak + ' menit',
+                                            style: whiteTextStyle.copyWith(
+                                                fontSize: 12),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Row(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.timelapse,
-                                        color: whiteColor,
-                                        size: 12,
-                                      ),
-                                      SizedBox(
-                                        width: 5,
-                                      ),
-                                      Text(
-                                        durasiMasak + ' menit',
-                                        style: whiteTextStyle.copyWith(
-                                            fontSize: 12),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              )
-                            ],
+                            ),
                           ),
                         ),
                       );
